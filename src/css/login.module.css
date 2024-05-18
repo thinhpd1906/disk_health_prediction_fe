@@ -1,0 +1,40 @@
+.container {
+    background-color: #ccc;
+}
+
+
+.singIn_Field {
+    width: 44.8rem;
+    font-size: 1.6rem;
+    max-width: 100%;
+    padding: 4.8rem 2.4rem;
+    margin-right: auto;
+    margin-left: auto;
+    font-size: 1.6;
+}
+
+.singIn_Title {
+    /* text-align: center; */
+    margin-bottom: 12px;
+    font-size: 1.3rem;
+    font-weight: 450;
+}
+
+.singIn_Input {
+    /* display: flex;
+    align-items: center; */
+    border: 1px solid #ccc;
+    /* margin-left: ; */
+    background-color: #fff;
+    width: 100%;
+    margin-bottom: 0.8rem;
+    height: 3rem;
+    padding: 0 8px;
+    font-size: 1rem;
+}
+.submit_button {
+    /* background-color: #a435f0; */
+    font-size: 16px;
+    cursor: pointer;
+}
+
