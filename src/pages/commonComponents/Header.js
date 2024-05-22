@@ -15,14 +15,12 @@ const Header = () => {
             navigate('/login')
         }) 
     }
-    console.log("path name", location.pathname)
+    const userName = localStorage.getItem("name")
+    console.log("name", userName)
     return (
         <header className="p-3 mb-3 border-bottom bg-dark" style ={{position: 'fixed', top: 0, width: '100%',  zIndex: 100 }}>
             {/* <div className="container"> */}
                 <div className="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                    {/* <a href="/" className="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
-          <svg className="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"/></svg>
-        </a> */}
 
                     <ul className="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                     {(!(location.pathname == "/admin/signup")) && <li><p href="#" className={"nav-link px-2 " + (location.pathname == "/"? "text-light": "text-secondary")} onClick={() => navigate("/")} style={{ cursor: "pointer"}}>Home</p></li>}     
@@ -33,7 +31,10 @@ const Header = () => {
 
                     <div className="dropdown text-end">
                         <button type="button" style= {{borderWidth: 0}}  className="d-block link-light text-decoration-none dropdown-toggle bg-dark" id="dropdownUser1" data-bs-toggle="dropdown"  aria-expanded="false" >
-                            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" className="rounded-circle" />
+                            {/* <div classname= "" style={{display: "flex", flexDirection: "row"}}> */}
+                                <img src={require("../../assets/avatar.jpeg")} alt="avt" width="32" height="32" className="rounded-circle" />
+                                <span style = {{margin: '0 4px 0 12px'}}>{userName}</span>
+                            {/* </div> */}
                         </button>
 
                         <ul className = {`dropdown-menu text-small bg-dark ${styles.list}`}  aria-labelledby="dropdownUser1" style={{}}>

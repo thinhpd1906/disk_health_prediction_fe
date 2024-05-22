@@ -3,6 +3,10 @@ import styles from '../../css/signup.module.css';
 import { signUp } from '../../api/auth';
 import ErrorAlert from '../commonComponents/ErrorAlert';
 import { useNavigate } from 'react-router-dom';
+import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import { useLoading } from '../../context/LoadingProvider';
+import SuccessAlert from '../commonComponents/SuccessAlert';
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -16,6 +20,10 @@ const SignUp = () => {
     const [isValidFullName, setIsValidFullName] = useState(true)
     const [description, setDescription] = useState("")
     const [isError, setIsError] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
+    const [isSuccess, setIsSuccess] = useState(false)
+    const {isLoading, setIsLoading } = useLoading()
+
     useEffect(() => {
         if(localStorage.getItem("role") != "ADMIN") {
             navigate('/')
@@ -74,15 +82,24 @@ const SignUp = () => {
             isSubmit = false
         }
         if (isSubmit) {
+            setIsLoading(true)
+            setIsError(false)
+            setDescription("")
             await signUp(inForSignup)
                 .then((res) => {
-                    // redirectSignIn()
+                    setIsSuccess(true)
+                    setId("")
+                    setFullName("")
+                    setEmail("")
+                    setPassWord("")
+                    setIsLoading(false)
                 })
                 .catch((err) => {
                    
                     if(err.response.status == 403) {
                         setDescription("You don't have permission")
                         setIsError(true)
+                        setIsLoading(false)
                     } else if(err && err.response && err.response.data && err.response.data.errors){
                         let errors = err.response.data.errors
                         let newDescription = ""
@@ -92,10 +109,12 @@ const SignUp = () => {
                             newDescription = newDescription + " " + string
                             setDescription(newDescription)
                             setIsError(true)
+                            setIsLoading(false)
                         }
                     } else {
                         setDescription("something went wrong")
                         setIsError(true)
+                        setIsLoading(false)
                     }
                 })
         }
@@ -103,6 +122,10 @@ const SignUp = () => {
     
     const errorChange = (value) => {
         setIsError(value)
+    }
+
+    const successChange = (value) => {
+        setIsSuccess(value)
     }
 
     return (
@@ -123,13 +146,25 @@ const SignUp = () => {
                 {!isValidEmai && (
                     <span style={{ color: 'red', fontSize: '1rem' }}>Email invalid</span>
                 )}
-                <input  name='passWord' placeholder='Mật khẩu' className={styles.singIn_Input} value={passWord} onChange={(e) => handlePasswordChange(e.target.value)} />
+                <div style={{ display: "flex", position: "relative" }}>
+                    <input type={showPassword ? "text" : "password"} name='passWord' placeholder='Password' className={styles.singIn_Input} value={passWord} onChange={(e) => handlePasswordChange(e.target.value)} />
+                    {showPassword ? (<RemoveRedEyeOutlinedIcon onClick={() => setShowPassword(false)} style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '12px'
+                    }} />) : (<VisibilityOffOutlinedIcon onClick={() => setShowPassword(true)} style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '12px'
+                    }} />)}
+                </div>
                 {!isValidPassword && (
                     <span style={{ color: 'red', fontSize: '1rem' }}>Password must include a number, a uppercase, lowercase</span>
                 )}
                 <button className={`${styles.singIn_Input} ${styles.submit_button} bg-dark text-light`} type='submit' onClick={handleSignUp}>Đăng ký</button>
             </div>
             <ErrorAlert description={description} isError= {isError} errorChange= {errorChange} />
+            <SuccessAlert description="Success register" isSuccess= {isSuccess} successChange= {successChange} />
         </div>
     )
 }

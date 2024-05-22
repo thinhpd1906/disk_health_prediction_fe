@@ -4,18 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import { signIn } from '../../api/auth';
 import { MESSAGEMAPPER } from '../../utils/messageMapper';
 import ErrorAlert from '../commonComponents/ErrorAlert';
-
+import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import { useLoading } from '../../context/LoadingProvider';
 const Login = () => {
     const token = localStorage.getItem("token")
-   
-   
+    const { isLoading, setIsLoading } = useLoading();
     const [email, setEmail] = useState('')
     const [passWord, setPassWord] = useState('')
     const [isValidEmail, setIsValidEmail] = useState(true)
     const [isValidPassword, setIsValidPassword] = useState(true)
     const [errorMessage, setErrorMessage] = useState('')
     const [isError, setIsError] = useState(false)
-
+    const [showPassword, setShowPassword] = useState(false)
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -50,14 +51,16 @@ const Login = () => {
           isSubmit = false
         }
         if(isSubmit) {
+          setIsError(false)
+          setIsLoading(true)
           await signIn(inForSignup)
           .then((res) => {
-            console.log("res", res)
             if(res.data.access_token) {
               localStorage.setItem('token', res.data.access_token)
               setErrorMessage("")
-              console.log("role", res.data.user.role)
               localStorage.setItem("role", res.data.user.role)
+              localStorage.setItem("name", res.data.user.name)
+              setIsLoading(false)
               if(res.data.user.role == "ADMIN") {
                 navigate('/admin/signup')
               } else {
@@ -66,10 +69,8 @@ const Login = () => {
             }
           })
           .catch((err) => {
-            // console.log("err", err)
-            // console.log("err", err.response.data.message)
-            // setErrorMessage(MESSAGEMAPPER[err.response.data.message])
             setIsError(true)
+            setIsLoading(false)
           })
         }       
       }
@@ -85,7 +86,19 @@ const Login = () => {
             {!isValidEmail && (
               <span style={{color: 'red', fontSize: '1rem'}}>Email invalid</span>
             )}
-            <input name='passWord'  placeholder='Mật khẩu' className={styles.singIn_Input} value={passWord} onChange={(e) => handlePasswordChange(e.target.value)}/>
+            <div style = {{display: "flex", position: "relative"}}>
+              <input name='passWord' type= {showPassword? "text": "password"} placeholder='Password' className={styles.singIn_Input} value={passWord} onChange={(e) => handlePasswordChange(e.target.value)} />
+              {showPassword? (<RemoveRedEyeOutlinedIcon onClick={() => setShowPassword(false)} style={{
+                position: 'absolute',
+                right: '10px',
+                top: '12px'
+              }} />): (<VisibilityOffOutlinedIcon onClick={() => setShowPassword(true)} style={{
+                position: 'absolute',
+                right: '10px',
+                top: '12px'
+              }} />)}
+              
+            </div>
             {!isValidPassword && (
               <span style={{color: 'red', fontSize: '1rem'}}>Password must include a number, a uppercase, lowercase</span>
             )}

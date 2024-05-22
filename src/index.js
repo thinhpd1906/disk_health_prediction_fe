@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { LoadingProvider } from './context/LoadingProvider';
 // import 'bootstrap';
 // import $ from 'jquery';
 // import Popper from 'popper.js';
@@ -14,7 +15,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter >
-      <App />
+      <LoadingProvider>
+        <App />
+      </LoadingProvider>,
     </BrowserRouter>
   </React.StrictMode>
 );

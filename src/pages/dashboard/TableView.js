@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getSmartForTableView } from "../../../../api/smart";
+import { getSmartForTableView } from "../../api/smart";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -15,7 +15,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Pagination from '@mui/material/Pagination';
-import ErrorAlert from "../../../commonComponents/ErrorAlert";
+import ErrorAlert from "../commonComponents/ErrorAlert";
+import { useLoading } from "../../context/LoadingProvider";
+
 
 
 const TableView = () => {
@@ -26,13 +28,18 @@ const TableView = () => {
     }
     const [smartList, setSmartList] = useState([]);
     const [smartKeySupport, setSmartKeySupport] = useState([]);
+    const [col, setCol] = useState([])
     const [fromDate, setFromDate] = useState(dayjs(subtractDays(new Date(), 10)));
     const [toDate, setToDate] = useState(dayjs(new Date().now));
     const [totalPage, setTotalPage] = useState(0)
     const [page, setPage] = useState(1)
     const [isErrorDate, setIsErrorDate] = useState(false)
+    const { isLoading, setIsLoading } = useLoading();
     let currentDate = new Date();
     const defaultFromDate = currentDate.setDate(currentDate.getDate() - 10);
+    const convertUnderscoreToSpace = (str) => {
+        return str.replace(/_/g, ' '); // Thay thế tất cả các dấu gạch dưới bằng khoảng trắng
+    }
     const [filter, setFilter] = useState({
         size: 10,
         page: 0,
@@ -62,6 +69,7 @@ const TableView = () => {
             setIsErrorDate(true)
             return;
         }
+        setIsLoading(true)
         await getSmartForTableView(data)
         .then((res) => {
             let smartListTemp = res.data.smartList;
@@ -69,6 +77,7 @@ const TableView = () => {
                 setSmartKeySupport([])
                 setSmartList([])
                 setTotalPage(0)
+                setCol([])
             } else {
                 let lastElement = smartListTemp[smartListTemp.length -1];
                 let smartImportantSupport = []
@@ -85,13 +94,17 @@ const TableView = () => {
                         return acc;
                     }, {})
                 );
+                let newCol = smartImportantSupport.map(convertUnderscoreToSpace);
+                setCol(newCol)
                 setSmartKeySupport(smartImportantSupport)
                 setSmartList(filteredList)
                 setTotalPage(res.data.totalPages)
+                setIsLoading(false)
             }
         })
         .catch((err) => {
-            console.log("err", err)
+            // console.log("err", err)
+            setIsLoading(false)
         })
     }
     const handleChangeFromDate = (newValue) => {
@@ -191,7 +204,7 @@ const TableView = () => {
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            {smartKeySupport.map((ele) => {
+                            {col.map((ele) => {
                                 if(ele != "id") 
                                 return (<TableCell>{ele}</TableCell>)
                                 

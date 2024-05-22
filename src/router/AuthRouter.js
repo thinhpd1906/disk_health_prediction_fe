@@ -3,7 +3,7 @@ import Home from "../pages/home/Home";
 import Header from "../pages/commonComponents/Header";
 import Footer from "../pages/commonComponents/Footer";
 import { useEffect } from "react";
-import TableView from "../pages/home/components/chart/TableView";
+import TableView from "../pages/dashboard/TableView";
 import SignUp from "../pages/admin/SignUp";
 
 function AuthRouter() {
