@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import Home from "../pages/home/Home";
+import Home from "../pages/chart/ChartView";
 import Login from "../pages/auth/Login";
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from "react";

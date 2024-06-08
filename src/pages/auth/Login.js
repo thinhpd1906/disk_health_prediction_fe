@@ -59,6 +59,7 @@ const Login = () => {
               localStorage.setItem('token', res.data.access_token)
               setErrorMessage("")
               localStorage.setItem("role", res.data.user.role)
+              localStorage.setItem("userId", res.data.user.id)
               localStorage.setItem("name", res.data.user.name)
               setIsLoading(false)
               if(res.data.user.role == "ADMIN") {

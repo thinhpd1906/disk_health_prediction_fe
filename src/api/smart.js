@@ -21,3 +21,19 @@ export function getSmartForTableView(data = {}) {
         params: data,
     })
 }
+
+export function getSerialNumbers(data = {}) {
+    return request({
+        url: "/smart/serial",
+        method: "GET",
+        params: data,
+    })
+}
+
+export function getOveral(data = {}) {
+    return request({
+        url: "/smart/overal",
+        method: "GET",
+        params: data,
+    })
+}

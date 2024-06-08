@@ -24,6 +24,7 @@ const Header = () => {
 
                     <ul className="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                     {(!(location.pathname == "/admin/signup")) && <li><p href="#" className={"nav-link px-2 " + (location.pathname == "/"? "text-light": "text-secondary")} onClick={() => navigate("/")} style={{ cursor: "pointer"}}>Home</p></li>}     
+                    {(!(location.pathname == "/admin/signup")) && <li><p href="#" className={"nav-link px-2 " + (location.pathname == "/chart"? "text-light": "text-secondary")} onClick={() => navigate("/chart")} style={{ cursor: "pointer"}}>Chart View</p></li>}     
                     {(!(location.pathname == "/admin/signup")) &&  <li><p href="#" className={"nav-link px-2 text-secondary " + (location.pathname == "/table"? "text-light": "text-secondary" )} style={{cursor: "pointer"}} onClick={() => navigate("/table")}>Table view</p></li>} 
                         {/* <li><p href="#" className="nav-link px-2 link-light">Customers</p></li>
                         <li><p href="#" className="nav-link px-2 link-light">Products</p></li> */}

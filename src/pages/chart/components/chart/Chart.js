@@ -1,22 +1,38 @@
 import React, { useState } from 'react';
 // import '../../../../css/chart.css';
 import LineChart from './LineChart';
-import { getSmart } from '../../../../api/smart';
+import { getSerialNumbers, getSmart } from '../../../../api/smart';
 import { color } from 'chart.js/helpers';
 import styles from '../../../../css/chart.module.css';
 import { useLoading } from '../../../../context/LoadingProvider';
+import { useLocation } from 'react-router-dom';
 
 
 const Chart = () => {
+  const location = useLocation();
+  const userId = localStorage.getItem("userId")
+  let defaultSerialNum;
+  if(location.state) {
+    console.log("re run")
+    if(location.state.serialNum) {
+      defaultSerialNum = location.state.serialNum
+    } 
+  } else {
+    defaultSerialNum = userId
+  }
   const [smartData, setSmartData] = useState([]);
   const [serialNumber, setSerialNumber] = useState("");
   const [classPredict, setClassPredict] = useState(1);
-  const [selectedDay, setSelectedDay] = useState(10);
+  const [selectedDay, setSelectedDay] = useState(30);
+  const [selectedSerialNumber, setSelectedSerialNumber] = useState(defaultSerialNum);
   const { isLoading, setIsLoading } = useLoading();
-
+  const [serialNumberList, setSerialNumberList] = useState([]);
+  
   const handleSelectedDayChange = (event) => {
     setSelectedDay(event.target.value);
-    console.log("day", selectedDay)
+  };
+  const handleSelectedSerialChange = (event) => {
+    setSelectedSerialNumber(event.target.value);
   };
   const timeList = [
     {
@@ -32,7 +48,7 @@ const Chart = () => {
       label: "15 days ago"
     },
   ]
-
+   
   const  convertToTitleCase = (s) =>  {
     var words = s.split('_');
     var capitalizedWords = words.map(function(word) {
@@ -42,6 +58,7 @@ const Chart = () => {
   }
 
   const fGetSmart = async (data) => {
+    console.log("fgetsmart")
     setIsLoading(true)
     await getSmart(data)
       .then((res) => {
@@ -49,7 +66,7 @@ const Chart = () => {
         let smartList = res.data
         let smartImportantSupport = []
         for (const [key, value] of Object.entries(lastElement)) {
-          if((key !== "id") && (key !== "serial_number") && (key !== "date") && (key !== "class_prediction") && (lastElement[key] != -999))  {
+          if((key !== "id") && (key !== "serial_number") && (key !== "date") && (key !== "class_prediction") && (key !== "user_id") && (lastElement[key] != -999))  {
             smartImportantSupport.push(key)
           }
         }
@@ -74,10 +91,21 @@ const Chart = () => {
         setClassPredict(lastElement["class_prediction"])
         setIsLoading(false)
       })
-      .catch((er) => {
+      .catch((err) => {
         // console.log("call api get smart fail")
         setIsLoading(false)
       })
+  }
+  const fgetSerialNumber = async () => {
+    console.log("get serial num")
+    await getSerialNumbers()
+    .then((res) => {
+      console.log("ok", res.data.serialNumbers)
+      setSerialNumberList(res.data.serialNumbers)
+    })
+    .catch((err) => {
+      console.log("error")
+    })
   }
   
   const subtractDays = (date, days) => {
@@ -90,10 +118,13 @@ const Chart = () => {
     let fromDate =  subtractDays(toDate, selectedDay)
     let data = {
       fromDate,
-      toDate: toDate.toISOString().split('T')[0]
+      toDate: toDate.toISOString().split('T')[0],
+      serialNumber: selectedSerialNumber
     }
+    console.log("check", selectedSerialNumber)
     fGetSmart(data)
-  }, [selectedDay])
+    fgetSerialNumber()
+  }, [selectedDay, selectedSerialNumber])
   
 
   return (
@@ -102,12 +133,12 @@ const Chart = () => {
       {/* <h1>chart</h1> */}
       <div className='row' style={{ margin: "0 0 100px" }}>
         <div className='col-xl-2 col-lg-3 col-md-3 col-sm-4 col-12' >
-          <div className='card' style={{ marginTop: '100px' }}>
+          <div className='card' style={{ marginTop: '10.5em' }}>
             <div className='card-body'>
               <div className='card-title'>
-                <h5 className={styles.textTile}>Serial Number</h5>
+                <h5 className={styles.textTile}>Admin's Serial Number</h5>
               </div>
-              <div className={`card-text ${styles.textDes}`}>{serialNumber}</div>
+              <div className={`card-text ${styles.textDes}`}>{userId}</div>
             </div>
           </div>
           <div className='card' style={{ marginTop: '28px' }}>
@@ -115,19 +146,34 @@ const Chart = () => {
               <div className='card-title'>
                 <h5 className={styles.textTile} style={classPredict == 1 ?{color: 'blue'}: {color: "red"}}>Hard Drive's health</h5>
               </div>
-              <div className={`card-text ${styles.textDes}`}>{classPredict == 1 ? "Your hard drive is functioning normally" : "Your hard drive has about 28 days left before it fails"}</div>
+              <div className={`card-text ${styles.textDes}`}>{classPredict == 1 ? "Your hard drive is functioning normally" : "Your hard drive has about 14 days left before it fails"}</div>
             </div>
           </div>
         </div>
         <div className='col-xl-10 col-lg-9 col-md-9 col-sm-8 col-12'>
-          <select className="form-select" aria-label="Default select example" style={{ width: '25%', marginLeft: "auto", marginRight: "auto" }} value={selectedDay} onChange={handleSelectedDayChange}>
-            <option value="30">Select the number of days</option>
-            {timeList.map((ele) => (
-              <option value={ele.value}>{ele.label}</option>
-            ))}
-          </select>
+          <h2 style = {{
+            textAlign: "center",
+            margin: "0 0 0.8em 1.4em",
+            fontSize: '26px',
+            color: "blue"
+          }}>Harddrive's important smart property</h2>
+          <div className="row" style = {{paddingLeft: "4em", justifyContent: "center"}}>
+            <select className="form-select" aria-label="select" style={{ width: '25%', padding: "1em" }} value={selectedDay} onChange={handleSelectedDayChange}>
+              <option value={30}>Number of days (default 1 month)</option>
+              {timeList.map((ele) => (
+                <option key= {ele.value} value={ele.value}>{ele.label}</option>
+              ))}
+            </select>
+            <select className="form-select" aria-label="select" style={{ width: '25%', marginLeft: "2em", padding: "1em"}} onChange={handleSelectedSerialChange} value={selectedSerialNumber} >
+              {/* <option value={""}>All harddrive</option> */}
+              {serialNumberList.map((ele) => (
+                <option key= {ele} value={ele}>Harddrive {ele}</option>
+              ))}
+            </select>
+          </div>
+          
           <div className='row' style={{ margin: 0 }}>
-            {/* <h2>Tình trạng sức khỏe ổ đĩa</h2> */}
+            
             {smartData.map((ele) => (
               <div key={ele.datasets[0].label} className='col-xl-6 col-lg-12 col-md-12 col-sm-12'>
                 <LineChart chartData={ele} />

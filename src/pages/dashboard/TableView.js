@@ -19,7 +19,6 @@ import ErrorAlert from "../commonComponents/ErrorAlert";
 import { useLoading } from "../../context/LoadingProvider";
 
 
-
 const TableView = () => {
     const subtractDays = (date, days) => {
         const result = new Date(date);
@@ -82,14 +81,21 @@ const TableView = () => {
                 let lastElement = smartListTemp[smartListTemp.length -1];
                 let smartImportantSupport = []
                 for (const [key, value] of Object.entries(lastElement)) {
-                    if((lastElement[key] != -999))  {
-                      smartImportantSupport.push(key)
+                    // if((lastElement[key] != -999))  {
+                    //   smartImportantSupport.push(key)
+                    // }
+                    if((key != "user_id"))  {
+                        smartImportantSupport.push(key)
                     }
                 }
                 const filteredList = smartListTemp.map(obj => 
                     smartImportantSupport.reduce((acc, key) => {
                         if (obj.hasOwnProperty(key)) {
-                            acc[key] = obj[key];
+                            if(obj[key] != -999) {
+                                acc[key] = obj[key];
+                            } else {
+                                acc[key] = ""
+                            }
                         }
                         return acc;
                     }, {})
@@ -99,8 +105,8 @@ const TableView = () => {
                 setSmartKeySupport(smartImportantSupport)
                 setSmartList(filteredList)
                 setTotalPage(res.data.totalPages)
-                setIsLoading(false)
             }
+            setIsLoading(false)
         })
         .catch((err) => {
             // console.log("err", err)
