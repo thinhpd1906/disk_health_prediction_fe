@@ -47,10 +47,6 @@ const TableView = () => {
     })
     const pageSizeList = [
         {
-          value: 3,
-          label: "3 rows per page"
-        },
-        {
           value: 10,
           label: "10 rows per page"
         },

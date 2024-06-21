@@ -22,11 +22,13 @@ const Chart = () => {
   }
   const [smartData, setSmartData] = useState([]);
   const [serialNumber, setSerialNumber] = useState("");
-  const [classPredict, setClassPredict] = useState(1);
+  const [classPredict, setClassPredict] = useState(3);
   const [selectedDay, setSelectedDay] = useState(30);
   const [selectedSerialNumber, setSelectedSerialNumber] = useState(defaultSerialNum);
   const { isLoading, setIsLoading } = useLoading();
   const [serialNumberList, setSerialNumberList] = useState([]);
+  const [healthStatus, setHealthStatus] = useState("Your hard drive is functioning normally")
+  const [healthStatusColor, setHealthStatusColor] = useState({color: "blue"});
   
   const handleSelectedDayChange = (event) => {
     setSelectedDay(event.target.value);
@@ -125,6 +127,30 @@ const Chart = () => {
     fGetSmart(data)
     fgetSerialNumber()
   }, [selectedDay, selectedSerialNumber])
+
+  React.useEffect(() => {
+    switch(classPredict) {
+      case 0:
+        setHealthStatus("Your hard drive has about 0-3 days left before it fails")
+        setHealthStatusColor({color: "red"})
+        break;
+      case 1:
+        setHealthStatus("Your hard drive has about 4-7 days left before it fails")
+        setHealthStatusColor({color: "yellow"})
+        break;
+      case 2:
+        setHealthStatus("Your hard drive has about 8-14 days left before it fails")
+        setHealthStatusColor({color: "green"})
+        break;
+      case 3:
+        setHealthStatus("Your hard drive is functioning normally")
+        setHealthStatusColor({color: "blue"})
+        break;
+      default:
+        setHealthStatus("Your hard drive is functioning normally")
+        setHealthStatusColor({color: "blue"})
+    }
+  }, [classPredict])
   
 
   return (
@@ -144,9 +170,9 @@ const Chart = () => {
           <div className='card' style={{ marginTop: '28px' }}>
             <div className='card-body'>
               <div className='card-title'>
-                <h5 className={styles.textTile} style={classPredict == 1 ?{color: 'blue'}: {color: "red"}}>Hard Drive's health</h5>
+                <h5 className={styles.textTile} style={healthStatusColor}>Hard Drive's health</h5>
               </div>
-              <div className={`card-text ${styles.textDes}`}>{classPredict == 1 ? "Your hard drive is functioning normally" : "Your hard drive has about 14 days left before it fails"}</div>
+              <div className={`card-text ${styles.textDes}`}>{healthStatus}</div>
             </div>
           </div>
         </div>
