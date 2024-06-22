@@ -22,6 +22,7 @@ const Home = () => {
         await getOveral()
         .then((res) => {
             let smartListTemp = res.data;
+            console.log("res overal", res)
             if(smartListTemp.length == 0) {
                 setCol([])
                 sethardDrives([])

@@ -131,24 +131,20 @@ const Chart = () => {
   React.useEffect(() => {
     switch(classPredict) {
       case 0:
-        setHealthStatus("Your hard drive has about 0-3 days left before it fails")
+        setHealthStatus("Your hard drive has about 0-13 days left before it fails")
         setHealthStatusColor({color: "red"})
         break;
       case 1:
-        setHealthStatus("Your hard drive has about 4-7 days left before it fails")
+        setHealthStatus("Your hard drive has about 14-28 days left before it fails")
         setHealthStatusColor({color: "yellow"})
         break;
-      case 2:
-        setHealthStatus("Your hard drive has about 8-14 days left before it fails")
-        setHealthStatusColor({color: "green"})
-        break;
-      case 3:
-        setHealthStatus("Your hard drive is functioning normally")
-        setHealthStatusColor({color: "blue"})
-        break;
+      // case 2:
+      //   setHealthStatus("Your hard drive has about 8-14 days left before it fails")
+      //   setHealthStatusColor({color: "green"})
+      //   break;
       default:
         setHealthStatus("Your hard drive is functioning normally")
-        setHealthStatusColor({color: "blue"})
+        setHealthStatusColor({color: "green"})
     }
   }, [classPredict])
   
